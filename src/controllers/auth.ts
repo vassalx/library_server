@@ -8,14 +8,16 @@ const signup = async (req: Request, res: Response) => {
     const { email, password, address, fullName, dateOfBirth } = req.body
     const user = await UserServices.getByEmail(email)
     if (user) {
-      return res.status(400).send({ message: 'User with this email already exists.' })
+      return res
+        .status(400)
+        .send({ message: 'User with this email already exists.' })
     }
     await UserServices.create({
       password: bcrypt.hashSync(password, 8),
       email,
       address,
       fullName,
-      dateOfBirth
+      dateOfBirth,
     })
     return res.status(200).send({ message: 'User registered successfully!' })
   } catch (error: any) {
@@ -29,25 +31,26 @@ const signin = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).send({ message: 'User Not found.' })
     }
-    const passwordIsValid = bcrypt.compareSync(
-      req.body.password,
-      user.password
-    )
+    const passwordIsValid = bcrypt.compareSync(req.body.password, user.password)
     if (!passwordIsValid) {
       return res.status(401).send({
-        message: 'Invalid Password!'
+        message: 'Invalid Password!',
       })
     }
-    const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET || 'secret', {
-      expiresIn: 86400 // 24 hours
-    })
+    const token = jwt.sign(
+      { email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'secret',
+      {
+        expiresIn: 86400, // 24 hours
+      },
+    )
     if (!req.session) {
       req.session = { token }
     } else {
       req.session.token = token
     }
     return res.status(200).send({
-      user
+      user,
     })
   } catch (error: any) {
     return res.status(500).send({ message: error.message })
@@ -56,7 +59,7 @@ const signin = async (req: Request, res: Response) => {
 
 const AuthController = {
   signup,
-  signin
+  signin,
 }
 
 export default AuthController

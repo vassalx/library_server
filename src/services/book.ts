@@ -1,4 +1,9 @@
-import { CollectionReference, DocumentData, Query, QuerySnapshot } from '@google-cloud/firestore'
+import {
+  CollectionReference,
+  DocumentData,
+  Query,
+  QuerySnapshot,
+} from '@google-cloud/firestore'
 import FirestoreClient from '../firestore/firestoreClient'
 import { NewBook, BookInfo, BookItem, Book } from 'types'
 
@@ -6,10 +11,10 @@ const bookCol = FirestoreClient.collection('books')
 const bookItemCol = FirestoreClient.collection('bookItems')
 
 export interface GetBooksProps {
-  showHidden?: boolean,
-  startAt?: number,
-  limit?: number,
-  categories?: string[],
+  showHidden?: boolean
+  startAt?: number
+  limit?: number
+  categories?: string[]
 }
 
 const dataToBook = (data: DocumentData, isbn: string): BookInfo => {
@@ -20,7 +25,7 @@ const dataToBook = (data: DocumentData, isbn: string): BookInfo => {
     publisher: data.publisher,
     categories: data.categories,
     isHidden: data.isHidden,
-    items: data.items
+    items: data.items,
   }
 }
 
@@ -28,7 +33,12 @@ const snapshotToBooks = (snapshot: QuerySnapshot): BookInfo[] => {
   return snapshot.docs.map((doc) => dataToBook(doc.data(), doc.id))
 }
 
-const getAll = async ({ showHidden, startAt, limit, categories }: GetBooksProps) => {
+const getAll = async ({
+  showHidden,
+  startAt,
+  limit,
+  categories,
+}: GetBooksProps) => {
   let query: CollectionReference | Query = bookCol.orderBy('name')
   if (!showHidden) {
     query = bookCol.where('isHidden', '==', false)
@@ -56,7 +66,10 @@ const getByISBN = async (isbn: string) => {
   }
 }
 
-const update = async (isbn: string, newBook: Partial<Book>): Promise<BookInfo> => {
+const update = async (
+  isbn: string,
+  newBook: Partial<Book>,
+): Promise<BookInfo> => {
   const bookRef = bookCol.doc(isbn)
   const existingBook = await bookRef.get()
   const bookData = existingBook.data()
@@ -66,7 +79,7 @@ const update = async (isbn: string, newBook: Partial<Book>): Promise<BookInfo> =
   await bookCol.doc(isbn).update(newBook)
   const res = {
     ...dataToBook(bookData, isbn),
-    ...newBook
+    ...newBook,
   }
   return res
 }
@@ -79,7 +92,7 @@ const create = async (newBook: NewBook) => {
     publisher: newBook.publisher,
     categories: newBook.categories,
     isHidden: newBook.isHidden,
-    items: []
+    items: [],
   }
   const bookRef = bookCol.doc(book.isbn)
   const existingBook = await bookRef.get()
@@ -91,7 +104,7 @@ const create = async (newBook: NewBook) => {
   for (let i = 0; i < newBook.itemCount; i += 1) {
     const bookItem: BookItem = {
       isbn: newBook.isbn,
-      ordered: false
+      ordered: false,
     }
     book.items.push(bookItem)
     batch.set(bookItemCol.doc(), bookItem)
@@ -105,7 +118,7 @@ const BookServices = {
   getAll,
   getByISBN,
   create,
-  update
+  update,
 }
 
 export default BookServices

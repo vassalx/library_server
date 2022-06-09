@@ -12,7 +12,7 @@ const dataToUser = (data: DocumentData, email: string): UserInfo => {
     orders: data.orders,
     address: data.address,
     fullName: data.fullName,
-    dateOfBirth: data.dateOfBirth
+    dateOfBirth: data.dateOfBirth,
   }
 }
 
@@ -27,7 +27,7 @@ const qureyToUsers = (snapshot: QuerySnapshot): UserInfo[] => {
       orders: data.orders,
       address: data.address,
       fullName: data.fullName,
-      dateOfBirth: data.dateOfBirth
+      dateOfBirth: data.dateOfBirth,
     }
   })
 }
@@ -47,7 +47,7 @@ const create = async (newUser: NewUser): Promise<UserInfo> => {
   const user: UserInfo = {
     ...newUser,
     orders: [],
-    role: 'USER'
+    role: 'USER',
   }
   await userCol.doc(newUser.email).set(user, { merge: true })
   return user
@@ -56,7 +56,7 @@ const create = async (newUser: NewUser): Promise<UserInfo> => {
 const UserServices = {
   getAll,
   getByEmail,
-  create
+  create,
 }
 
 export default UserServices

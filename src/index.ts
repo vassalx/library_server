@@ -6,7 +6,7 @@ import cookieSession from 'cookie-session'
 const app = express()
 
 const corsOptions = {
-  origin: 'http://localhost:8081'
+  origin: 'http://localhost:8081',
 }
 
 app.use(cors(corsOptions))
@@ -19,8 +19,8 @@ app.use(
   cookieSession({
     name: 'library-session',
     secret: process.env.COOKIE_SESSION || 'secret', // should use as secret environment variable
-    httpOnly: true
-  })
+    httpOnly: true,
+  }),
 )
 // simple route
 app.use('/', routes)
