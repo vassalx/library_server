@@ -17,7 +17,7 @@ const signup = async (req: Request, res: Response) => {
       fullName,
       dateOfBirth
     })
-    return res.send({ message: 'User registered successfully!' })
+    return res.status(200).send({ message: 'User registered successfully!' })
   } catch (error: any) {
     return res.status(500).send({ message: error.message })
   }
@@ -41,8 +41,13 @@ const signin = async (req: Request, res: Response) => {
     const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET || 'secret', {
       expiresIn: 86400 // 24 hours
     })
+    if (!req.session) {
+      req.session = { token }
+    } else {
+      req.session.token = token
+    }
     return res.status(200).send({
-      token
+      user
     })
   } catch (error: any) {
     return res.status(500).send({ message: error.message })

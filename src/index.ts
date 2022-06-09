@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import routes from './routes'
+import cookieSession from 'cookie-session'
 
 const app = express()
 
@@ -13,6 +14,14 @@ app.use(cors(corsOptions))
 app.use(express.json())
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }))
+// use cookie in session
+app.use(
+  cookieSession({
+    name: 'library-session',
+    secret: process.env.COOKIE_SESSION || 'secret', // should use as secret environment variable
+    httpOnly: true
+  })
+)
 // simple route
 app.use('/', routes)
 
