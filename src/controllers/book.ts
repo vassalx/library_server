@@ -18,7 +18,7 @@ const getAll = async (req: Request, res: Response) => {
     })
     return res.status(200).send(books)
   } catch (error: any) {
-    return res.status(500).send({ message: error.message })
+    return res.status(500).send(error.message)
   }
 }
 
@@ -28,7 +28,7 @@ const getByISBN = async (req: Request, res: Response) => {
     const book = await BookServices.getByISBN(isbn)
     return res.status(200).send(book)
   } catch (error: any) {
-    return res.status(500).send({ message: error.message })
+    return res.status(500).send(error.message)
   }
 }
 
@@ -47,7 +47,7 @@ const create = async (req: Request, res: Response) => {
     })
     return res.status(200).send(book)
   } catch (error: any) {
-    return res.status(500).send({ message: error.message })
+    return res.status(500).send(error.message)
   }
 }
 
@@ -64,7 +64,7 @@ const update = async (req: Request, res: Response) => {
     })
     return res.status(200).send(book)
   } catch (error: any) {
-    return res.status(500).send({ message: error.message })
+    return res.status(500).send(error.message)
   }
 }
 
