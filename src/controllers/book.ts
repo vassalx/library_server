@@ -10,13 +10,13 @@ const getAll = async (req: Request, res: Response) => {
     : []
   const showHidden = role === 'ADMIN'
   try {
-    const books = await BookServices.getAll({
+    const result = await BookServices.getAll({
       showHidden,
       startAt,
       limit,
       categories,
     })
-    return res.status(200).send(books)
+    return res.status(200).send(result)
   } catch (error: any) {
     return res.status(500).send(error.message)
   }
@@ -33,14 +33,23 @@ const getByISBN = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
-  const { isbn, name, author, publisher, categories, isHidden, itemCount } =
-    req.body
+  const {
+    isbn,
+    title,
+    author,
+    publisher,
+    description,
+    categories,
+    isHidden,
+    itemCount,
+  } = req.body
   try {
     const book = await BookServices.create({
       isbn,
-      name,
+      title,
       author,
       publisher,
+      description,
       categories,
       isHidden,
       itemCount,
@@ -53,12 +62,14 @@ const create = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
   const isbn = req.params.isbn
-  const { name, author, publisher, categories, isHidden } = req.body
+  const { title, author, publisher, description, categories, isHidden } =
+    req.body
   try {
     const book = await BookServices.update(isbn, {
-      name,
+      title,
       author,
       publisher,
+      description,
       categories,
       isHidden,
     })

@@ -14,9 +14,10 @@ export interface User extends NewUser {
 
 export interface Book {
   isbn: string
-  name: string
+  title: string
   author: string
   publisher: string
+  description: string
   categories: string[]
   isHidden: boolean
 }

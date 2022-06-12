@@ -6,24 +6,24 @@ import roleCheck from '../middleware/roleCheck'
 const bookRouter = express.Router()
 
 bookRouter.get(
-  '/',
-  [authenticateJWT, roleCheck(['ADMIN', 'USER'])],
-  BookController.getAll,
-)
-bookRouter.get(
   '/:isbn',
   [authenticateJWT, roleCheck(['ADMIN', 'USER'])],
-  BookController.getAll,
+  BookController.getByISBN,
 )
-bookRouter.post(
+bookRouter.get(
   '/',
-  [authenticateJWT, roleCheck(['ADMIN'])],
-  BookController.create,
+  [authenticateJWT, roleCheck(['ADMIN', 'USER'])],
+  BookController.getAll,
 )
 bookRouter.post(
   '/:isbn',
   [authenticateJWT, roleCheck(['ADMIN'])],
   BookController.update,
+)
+bookRouter.post(
+  '/',
+  [authenticateJWT, roleCheck(['ADMIN'])],
+  BookController.create,
 )
 
 export default bookRouter

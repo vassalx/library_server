@@ -7,6 +7,7 @@ const app = express()
 
 const corsOptions = {
   origin: 'http://localhost:8081',
+  credentials: true,
 }
 
 app.use(cors(corsOptions))

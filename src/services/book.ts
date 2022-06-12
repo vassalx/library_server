@@ -11,18 +11,19 @@ const bookCol = FirestoreClient.collection('books')
 const bookItemCol = FirestoreClient.collection('bookItems')
 
 export interface GetBooksProps {
-  showHidden?: boolean
-  startAt?: number
-  limit?: number
-  categories?: string[]
+  showHidden: boolean
+  startAt: number
+  limit: number
+  categories: string[]
 }
 
 const dataToBook = (data: DocumentData, isbn: string): BookInfo => {
   return {
     isbn,
-    name: data.name,
+    title: data.title,
     author: data.author,
     publisher: data.publisher,
+    description: data.description,
     categories: data.categories,
     isHidden: data.isHidden,
     items: data.items,
@@ -39,21 +40,23 @@ const getAll = async ({
   limit,
   categories,
 }: GetBooksProps) => {
-  let query: CollectionReference | Query = bookCol.orderBy('name')
+  let query: CollectionReference | Query = bookCol.orderBy('title')
   if (!showHidden) {
     query = bookCol.where('isHidden', '==', false)
   }
-  if (categories !== undefined && categories.length > 0) {
+  if (categories.length > 0) {
     query = query.where('categories', 'array-contains-any', categories)
   }
-  if (!Number.isNaN(startAt)) {
-    query = query.startAt(startAt)
+  const totalCount = (await query.get()).size
+  const first = (await query.limit(startAt + 1).get()).docs.pop()
+  if (first) {
+    query = query.startAt(first.data().title)
   }
-  if (!Number.isNaN(limit) && limit) {
+  if (limit) {
     query = query.limit(limit)
   }
   const snapshot = await query.get()
-  return snapshotToBooks(snapshot)
+  return { books: snapshotToBooks(snapshot), totalCount }
 }
 
 const getByISBN = async (isbn: string) => {
@@ -87,9 +90,10 @@ const update = async (
 const create = async (newBook: NewBook) => {
   const book: BookInfo = {
     isbn: newBook.isbn,
-    name: newBook.name,
-    author: newBook.name,
+    title: newBook.title,
+    author: newBook.author,
     publisher: newBook.publisher,
+    description: newBook.description,
     categories: newBook.categories,
     isHidden: newBook.isHidden,
     items: [],
