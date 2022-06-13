@@ -15,6 +15,7 @@ export interface GetBooksProps {
   startAt: number
   limit: number
   categories: string[]
+  search?: string
 }
 
 const dataToBook = (data: DocumentData, isbn: string): BookInfo => {
@@ -39,14 +40,21 @@ const getAll = async ({
   startAt,
   limit,
   categories,
+  search,
 }: GetBooksProps) => {
-  let query: CollectionReference | Query = bookCol.orderBy('title')
+  let query: CollectionReference | Query = bookCol
   if (!showHidden) {
     query = bookCol.where('isHidden', '==', false)
   }
-  if (categories.length > 0) {
+  if (categories && categories.length) {
     query = query.where('categories', 'array-contains-any', categories)
   }
+  if (search && search.length) {
+    query = query
+      .where('title', '>=', search)
+      .where('title', '<=', search + '~')
+  }
+  query = query.orderBy('title')
   const totalCount = (await query.get()).size
   const first = (await query.limit(startAt + 1).get()).docs.pop()
   if (first) {

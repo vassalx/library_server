@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
+import { Book } from 'types'
 import BookServices from '../services/book'
 
 const getAll = async (req: Request, res: Response) => {
   const { role } = res.locals.user
+  const search = req.query.search as string
   const startAt = Number(req.query.startAt as string)
   const limit = Number(req.query.limit as string)
   const categories = req.query.categories
@@ -15,6 +17,7 @@ const getAll = async (req: Request, res: Response) => {
       startAt,
       limit,
       categories,
+      search,
     })
     return res.status(200).send(result)
   } catch (error: any) {
@@ -62,17 +65,14 @@ const create = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
   const isbn = req.params.isbn
-  const { title, author, publisher, description, categories, isHidden } =
-    req.body
+  const newBook = req.body as Partial<Book>
+  Object.keys(newBook).forEach((key) =>
+    newBook[key as keyof Book] === undefined
+      ? delete newBook[key as keyof Book]
+      : {},
+  )
   try {
-    const book = await BookServices.update(isbn, {
-      title,
-      author,
-      publisher,
-      description,
-      categories,
-      isHidden,
-    })
+    const book = await BookServices.update(isbn, newBook)
     return res.status(200).send(book)
   } catch (error: any) {
     return res.status(500).send(error.message)
