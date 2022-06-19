@@ -1,12 +1,13 @@
 import {
-  DocumentData,
-  QuerySnapshot,
-  Query,
   CollectionReference,
+  DocumentData,
+  Query,
+  QuerySnapshot,
   WriteBatch,
 } from '@google-cloud/firestore'
-import FirestoreClient from '../firestore/firestoreClient'
 import { NewOrder, Order, OrderStatus } from 'types'
+
+import FirestoreClient from '../firestore/firestoreClient'
 import BookServices from './book'
 
 const ordersCol = FirestoreClient.collection('orders')

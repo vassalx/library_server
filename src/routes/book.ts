@@ -1,4 +1,5 @@
 import express from 'express'
+
 import BookController from '../controllers/book'
 import authenticateJWT from '../middleware/authenticateJwt'
 import roleCheck from '../middleware/roleCheck'

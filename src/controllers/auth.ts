@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
+
 import UserServices from '../services/user'
 
 const signup = async (req: Request, res: Response) => {

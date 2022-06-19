@@ -6,7 +6,9 @@
     "scripts": {
         "start": "nodemon",
         "build": "tsc",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
+        "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}"
     },
     "keywords": [],
     "author": "",
@@ -36,6 +38,7 @@
         "bcryptjs": "^2.4.3",
         "cookie-session": "^2.0.0",
         "cors": "^2.8.5",
+        "eslint-plugin-simple-import-sort": "^7.0.0",
         "express": "^4.18.1",
         "jsonwebtoken": "^8.5.1",
         "mysql2": "^2.3.3",

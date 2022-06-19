@@ -4,8 +4,9 @@ import {
   Query,
   QuerySnapshot,
 } from '@google-cloud/firestore'
+import { Book, BookInfo, BookItem, NewBook } from 'types'
+
 import FirestoreClient from '../firestore/firestoreClient'
-import { NewBook, BookInfo, BookItem, Book } from 'types'
 import OrderServices from './order'
 
 const bookCol = FirestoreClient.collection('books')

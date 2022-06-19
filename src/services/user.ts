@@ -1,6 +1,7 @@
 import { DocumentData, QuerySnapshot } from '@google-cloud/firestore'
-import FirestoreClient from '../firestore/firestoreClient'
 import { NewUser, User } from 'types'
+
+import FirestoreClient from '../firestore/firestoreClient'
 
 const userCol = FirestoreClient.collection('users')
 
