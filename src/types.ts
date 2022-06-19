@@ -50,7 +50,6 @@ export interface OrderItem {
 }
 
 export interface NewOrder {
-  userId: string
   userFullName: string
   userEmail: string
   items: OrderItem[]

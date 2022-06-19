@@ -14,14 +14,13 @@ const booksCol = FirestoreClient.collection('books')
 export interface GetOrderProps {
   startAt: number
   limit: number
-  userId?: string
+  userEmail?: string
   search?: string
 }
 
 const dataToOrder = (data: DocumentData): Order => {
   return {
     id: data.id,
-    userId: data.userId,
     userFullName: data.userFullName,
     userEmail: data.userEmail,
     items: data.items,
@@ -91,11 +90,11 @@ const updateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
   return newOrder
 }
 
-const getAll = async ({ userId, limit, startAt, search }: GetOrderProps) => {
+const getAll = async ({ userEmail, limit, startAt, search }: GetOrderProps) => {
   let query: CollectionReference | Query = ordersCol
 
-  if (userId) {
-    query = query.where('userId', '==', userId)
+  if (userEmail) {
+    query = query.where('userEmail', '==', userEmail)
   }
   if (search && search.length) {
     query = query.where('id', '>=', search).where('id', '<=', search + '~')

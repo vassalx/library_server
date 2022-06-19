@@ -5,11 +5,11 @@ import OrderServices from '../services/order'
 const getAll = async (req: Request, res: Response) => {
   try {
     const search = req.query.search as string | undefined
-    const userId = req.query.userId as string | undefined
+    const userEmail = req.query.userEmail as string | undefined
     const startAt = Number(req.query.startAt as string)
     const limit = Number(req.query.limit as string)
     const result = await OrderServices.getAll({
-      userId,
+      userEmail,
       startAt,
       limit,
       search,
@@ -21,10 +21,9 @@ const getAll = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
-  const { userId, userFullName, userEmail, items, dateToReturn } = req.body
+  const { userFullName, userEmail, items, dateToReturn } = req.body
   try {
     const order = await OrderServices.create({
-      userId,
       userFullName,
       userEmail,
       items,
