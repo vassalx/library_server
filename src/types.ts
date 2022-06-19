@@ -2,7 +2,7 @@ export type Role = 'USER' | 'ADMIN'
 export type OrderStatus =
   | 'PENDING'
   | 'READY'
-  | 'RECIEVED'
+  | 'RECEIVED'
   | 'RETURNED'
   | 'CANCELED'
 
