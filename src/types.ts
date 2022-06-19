@@ -1,4 +1,10 @@
 export type Role = 'USER' | 'ADMIN'
+export type OrderStatus =
+  | 'PENDING'
+  | 'READY'
+  | 'RECIEVED'
+  | 'RETURNED'
+  | 'CANCELED'
 
 export interface NewUser {
   email: string
@@ -23,6 +29,7 @@ export interface Book {
 }
 
 export interface BookItem {
+  id: string
   isbn: string
   ordered: boolean
 }
@@ -35,28 +42,26 @@ export interface BookInfo extends Book {
   items: BookItem[]
 }
 
+export interface OrderItem {
+  id: string
+  isbn: string
+  author: string
+  title: string
+}
+
 export interface NewOrder {
   userId: string
-  isbn: string
-  bookItemId: string
+  userFullName: string
+  userEmail: string
+  items: OrderItem[]
+  dateToReturn: string
 }
 
 export interface Order extends NewOrder {
-  datePickedUp: string
-  dateDue: string
-  dateReturned: string
+  id: string
+  isbns: string[]
+  status: OrderStatus
   dateOrdered: string
-}
-
-export interface OrderForUser extends Order {
-  book: Book
-  item: BookItem
-}
-
-export interface OrderInfo extends OrderForUser {
-  user: User
-}
-
-export interface UserInfo extends User {
-  orders: OrderForUser[]
+  dateReceived?: string
+  dateReturned?: string
 }

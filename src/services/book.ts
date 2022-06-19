@@ -6,9 +6,10 @@ import {
 } from '@google-cloud/firestore'
 import FirestoreClient from '../firestore/firestoreClient'
 import { NewBook, BookInfo, BookItem, Book } from 'types'
+import OrderServices from './order'
 
 const bookCol = FirestoreClient.collection('books')
-const bookItemCol = FirestoreClient.collection('bookItems')
+const ordersCol = FirestoreClient.collection('orders')
 
 export interface GetBooksProps {
   showHidden: boolean
@@ -87,11 +88,29 @@ const update = async (
   if (!bookData) {
     throw new Error(`Book with ISBN: ${isbn} doesn't exist`)
   }
-  await bookCol.doc(isbn).update(newBook)
-  const res = {
+  const batch = FirestoreClient.batch()
+  const oldBook = dataToBook(bookData, isbn)
+  const authorIsNew = newBook.author && newBook.author !== oldBook.author
+  const titleIsNew = newBook.title && newBook.title !== oldBook.title
+  if (authorIsNew || titleIsNew) {
+    const snap = await ordersCol.where('isbns', 'array-contains', isbn).get()
+    const orders = OrderServices.snapshotToOrders(snap)
+    orders.forEach((order) => {
+      batch.update(ordersCol.doc(order.id), {
+        items: order.items.map((item) => ({
+          ...item,
+          author: authorIsNew ? newBook.author : item.author,
+          title: titleIsNew ? newBook.title : item.title,
+        })),
+      })
+    })
+  }
+  batch.update(bookRef, newBook)
+  const res: BookInfo = {
     ...dataToBook(bookData, isbn),
     ...newBook,
   }
+  await batch.commit()
   return res
 }
 
@@ -111,18 +130,15 @@ const create = async (newBook: NewBook) => {
   if (existingBook.data()) {
     throw new Error(`Book with ISBN: ${book.isbn} exists`)
   }
-  const batch = FirestoreClient.batch()
-  batch.set(bookRef, book, { merge: true })
   for (let i = 0; i < newBook.itemCount; i += 1) {
     const bookItem: BookItem = {
+      id: `${newBook.isbn}_${i}`,
       isbn: newBook.isbn,
       ordered: false,
     }
     book.items.push(bookItem)
-    batch.set(bookItemCol.doc(), bookItem)
-    batch.set(bookRef.collection('items').doc(), bookItem, { merge: true })
   }
-  batch.commit()
+  bookRef.set(book, { merge: true })
   return book
 }
 
@@ -131,6 +147,8 @@ const BookServices = {
   getByISBN,
   create,
   update,
+  dataToBook,
+  snapshotToBooks,
 }
 
 export default BookServices
