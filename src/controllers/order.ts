@@ -6,14 +6,16 @@ import OrderServices from '../services/order'
 const getAll = async (req: Request, res: Response) => {
   try {
     const search = req.query.search as string | undefined
+    const status = req.query.status as string | undefined
     const userEmail = req.query.userEmail as string | undefined
     const startAt = Number(req.query.startAt as string)
     const limit = Number(req.query.limit as string)
     const result = await OrderServices.getAll({
-      userEmail,
       startAt,
       limit,
       search,
+      status,
+      userEmail,
     })
     return res.status(200).send(result)
   } catch (error: any) {
