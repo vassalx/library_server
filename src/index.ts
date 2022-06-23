@@ -7,7 +7,7 @@ import routes from './routes'
 const app = express()
 
 const corsOptions = {
-  origin: 'http://localhost:8081',
+  origin: ['https://library2022.ew.r.appspot.com', 'http://localhost:8081'],
   credentials: true,
 }
 
@@ -25,7 +25,7 @@ app.use(
   }),
 )
 // simple route
-app.use('/', routes)
+app.use('/api', routes)
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080
