@@ -22,8 +22,6 @@ app.use(
     name: 'library-session',
     secret: process.env.COOKIE_SESSION || 'secret', // should use as secret environment variable
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
   }),
 )
 // simple route
