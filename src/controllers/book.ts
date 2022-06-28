@@ -13,13 +13,19 @@ const getAll = async (req: Request, res: Response) => {
     : []
   const showHidden = role === 'ADMIN'
   try {
-    const result = await BookServices.getAll({
-      showHidden,
-      startAt,
-      limit,
-      categories,
-      search,
-    })
+    const result = await (search || categories.length
+      ? BookServices.search({
+          showHidden,
+          startAt,
+          limit,
+          search,
+          categories,
+        })
+      : BookServices.getAll({
+          showHidden,
+          startAt,
+          limit,
+        }))
     return res.status(200).send(result)
   } catch (error: any) {
     return res.status(500).send(error.message)
