@@ -59,7 +59,6 @@ const search = async ({
   const filterStr = [categoriesFilterStr, isHiddenFilterStr]
     .filter((x) => x)
     .join(' AND ')
-  console.log(filterStr)
   const result = await bookIndex.search<BookInfo>(search, {
     filters: filterStr || undefined,
     offset: startAt,
